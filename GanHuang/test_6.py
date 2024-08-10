@@ -24,20 +24,27 @@ marker=mat_data['suppl_info'][0, 0]['freqs'][0, 0]
 sorted_idx = np.squeeze(np.argsort(marker))
 data=data[:,:,:,sorted_idx]
 data=data[:,t_idx,:,:]
-data=data[ch_idx,:,:,:]
+# data=data[ch_idx,:,:,:]
 # del ch_idx,t_idx,sorted_idx
-
+result=np.zeros(160)
 for idx_trial in range(40):
     for idx_block in range(4):
         X=data[:,:,idx_block,idx_trial].T
         for idx_freq in range(40):
-            Y=np.zeros((len(t),6))
+            Y=np.zeros((len(t),8))
             Y[:,0] = np.sin(2 * np.pi * freq_bin[idx_freq] * t) 
             Y[:,1] = np.cos(2 * np.pi * freq_bin[idx_freq] * t) 
             Y[:,2] = np.sin(2 * np.pi * 2 * freq_bin[idx_freq] * t) 
             Y[:,3] = np.cos(2 * np.pi * 2 * freq_bin[idx_freq] * t)     
             Y[:,4] = np.sin(2 * np.pi * 3 * freq_bin[idx_freq] * t) 
             Y[:,5] = np.cos(2 * np.pi * 3 * freq_bin[idx_freq] * t)     
+            Y[:,6] = np.sin(2 * np.pi * 3 * freq_bin[idx_freq] * t) 
+            Y[:,7] = np.cos(2 * np.pi * 3 * freq_bin[idx_freq] * t)     
                      
             cca.fit(X, Y)
             corr[idx_trial*4+idx_block,idx_freq] = cca.score(X, Y)
+        if np.argmax(corr[idx_trial*4+idx_block,:])==idx_trial:
+            result[idx_trial*4+idx_block]=1
+print(np.sum(result)/160*100)
+
+plt.plot(result)
