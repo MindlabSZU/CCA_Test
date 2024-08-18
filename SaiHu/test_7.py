@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-#计算wyj fft
+#wyj平均fft
 # 文件路径
 file_path = '..\\data\\data2\\X_data_subject_[1].npy'
 
@@ -19,27 +19,33 @@ time = np.arange(0, n_timepoints * time_interval, time_interval)
 
 # 频率向量
 freqs = np.fft.fftfreq(n_timepoints, d=time_interval)
-positive_freqs = freqs[:len(freqs) // 2]  # 我们只关心正频率
+positive_freqs = freqs[:len(freqs) // 2 + 1]  # 我们只关心正频率，包括0频率
 
 # 循环遍历前40组信号
 for idx_label in range(40):
-    fft_result = np.zeros((len(time) // 2,))  # 存储FFT结果
+    fft_result = np.zeros(len(positive_freqs))  # 存储FFT结果
+# 只处理第八个通道（索引为7）
+    idx_chn = 7  # OZ通道的索引
+    # 对每个刺激的六个重复取平均
+    averaged_signal = np.mean(data[idx_label * 6:(idx_label + 1) * 6, idx_chn, :], axis=0)
+    fft_result = np.abs(np.fft.fft(averaged_signal))[:len(positive_freqs)]
     
-    # 对每组信号的所有通道进行FFT
+    '''# 对每组信号的所有通道进行FFT
     for idx_chn in range(data.shape[1]):
-        signal = data[idx_label, idx_chn, :]
-        fft_result += np.abs(np.fft.fft(signal))[:len(positive_freqs)]
+        # 对每个刺激的六个重复取平均
+        averaged_signal = np.mean(data[idx_label * 6:(idx_label + 1) * 6, idx_chn, :], axis=0)
+        fft_result += np.abs(np.fft.fft(averaged_signal))[:len(positive_freqs)]
     
     # 计算平均值
-    fft_result /= data.shape[1]
+    fft_result /= data.shape[1]'''
     
     # 绘制频率谱图
     plt.figure(figsize=(10, 5))
-    plt.plot(positive_freqs, np.abs(fft_result))
-    plt.title('Frequency Spectrum - Sample {}'.format(idx_label + 1))
+    plt.plot(positive_freqs, fft_result)
+    plt.title(f'Frequency Spectrum - Sample {idx_label + 1}'+' '+str(idx_label*0.2+10)+'Hz')
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Magnitude')
-    plt.xlim(5, 20)
+    plt.xlim(5, 30)
     plt.grid(True)
     plt.tight_layout()
     plt.show()
