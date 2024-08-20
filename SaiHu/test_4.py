@@ -6,7 +6,7 @@ idx_sub=0
 data = np.load('..\data\data2\X_data_subject_[1].npy')
 label = np.load('..\data\data2\y_labels_subject_[1].npy')
 
-t = np.arange(0, 0.75, 0.004)
+t = np.arange(0, 0.75, 0.005)
 fft_result=np.zeros((150,))
 
 freqs = np.fft.fftfreq(len(t), t[1] - t[0])
@@ -35,4 +35,4 @@ for idx_trial in range(40):
 sorted_idx = np.argsort(freq_bin)
 result=result[:,sorted_idx]
 
-# result=result[sorted_idx,:]
+#result=result[sorted_idx,:]

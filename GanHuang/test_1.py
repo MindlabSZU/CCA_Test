@@ -7,8 +7,8 @@ for idx_label in range(20):
     fft_result=np.zeros((500,))
     freqs = np.fft.fftfreq(len(t), t[1] - t[0])
     for idx_sub in range(1):
-        for idx_run in range(2):
-            X = np.load('..\data\data1\X_data_subject_'+str(idx_sub+16)+'.'+str(idx_run+1)+'.npy')
+        for idx_run in range(5):
+            X = np.load('..\data\data1\X_data_subject_'+str(idx_sub+1)+'.'+str(idx_run+1)+'.npy')
             for idx_chn in range(8):
                 signal=X[0+idx_label*2,idx_chn,:]
                 fft_result += np.abs(np.fft.fft(signal))[:len(freqs)//2]
